@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Laraditz\Twoc2p\Models\Twoc2pPayment;
 use LogicException;
+use Firebase\JWT\Key;
+
 
 class Twoc2p
 {
@@ -46,8 +48,7 @@ class Twoc2p
         throw_if(!$twoc2pPayment, LogicException::class, 'Cant create request in database table.');
 
         try {
-
-            $jwt = JWT::encode($requestPayload, $this->getMerchantSecret());
+            $jwt = JWT::encode($requestPayload, $this->getMerchantSecret(),'HS256');
 
             $response = Http::acceptJson()->post($this->getUrl('paymentToken'), [
                 'payload' => $jwt,
@@ -132,7 +133,7 @@ class Twoc2p
 
     public function decodeJWT(string $content)
     {
-        return JWT::decode($content, $this->getMerchantSecret(), ['HS256']);
+        return JWT::decode($content, new Key($this->getMerchantSecret(), 'HS256'));
     }
 
     public function setBaseUrl()
