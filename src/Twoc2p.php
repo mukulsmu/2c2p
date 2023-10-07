@@ -48,7 +48,7 @@ class Twoc2p
         throw_if(!$twoc2pPayment, LogicException::class, 'Cant create request in database table.');
 
         try {
-            $jwt = JWT::encode($requestPayload, $this->getMerchantSecret());
+            $jwt = JWT::encode($requestPayload, $this->getMerchantSecret(),'HS256');
 
             $response = Http::acceptJson()->post($this->getUrl('paymentToken'), [
                 'payload' => $jwt,
@@ -128,7 +128,7 @@ class Twoc2p
 
     public function encodeJWT(array $content)
     {
-        return JWT::encode($content, $this->getMerchantSecret(),'HS256');
+        return JWT::encode($content, $this->getMerchantSecret(), 'HS256');
     }
 
     public function decodeJWT(string $content)
